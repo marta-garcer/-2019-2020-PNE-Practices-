@@ -6,7 +6,7 @@ def g(a, b):
 
 
 def f(a, b, c, d):
-    if ZeroDivisionError :
+    if ZeroDivisionError:
         print(" Zero division error")
     else:
         t0 = a + b - g(a, 0)

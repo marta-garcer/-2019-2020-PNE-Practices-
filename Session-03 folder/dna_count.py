@@ -18,4 +18,4 @@ for letter in seq_dna :
 print ('A =', A)
 print ('T =', T)
 print ('C =', C)
-print ('G =', A)
+print ('G =', G)

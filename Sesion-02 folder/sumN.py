@@ -1,8 +1,14 @@
-def sumn(n):
-    sum = 0
-    for i in range (1, n+1):
-        sum +=1
-    return sum
+# Function for calculating the sum of the
+# N first integer numbers
 
-print("sum of 1-20:", sumn(20))
-print("sum of 1-100:", sumn(100))
+
+def sumn(n):
+    res = 0
+    for i in range(1, n+1):
+        res += i
+    return res
+
+
+# -- The main program starts here
+print("Sum of the 20 first integers: ", sumn(20))
+print("Sum of the 100, frist integers: ", sumn(100))
