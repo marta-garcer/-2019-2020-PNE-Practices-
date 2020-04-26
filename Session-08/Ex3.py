@@ -1,14 +1,14 @@
 import socket
 
 # SERVER IP, PORT
-PORT = 8080
-IP = "192.168.124.179"
+PORT = 8081
+IP = "192.168.1.37"
 
 while True:
   # -- Ask the user for the message
   message = input("Enter the message that you want to send: ")
 
-  # -- Create the socketç
+  # -- Create the socket
 # We will always use this parameters: AF_INET (connected to internet) y SOCK_STREAM
   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 

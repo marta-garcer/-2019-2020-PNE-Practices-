@@ -7,9 +7,9 @@ EXERCISE = 6
 print(f"-----| Practice {PRACTICE}, Exercise {EXERCISE} |------")
 
 # -- Parameters
-IP = "10.3.33.54"
-PORT = 8086
-FOLDER = "../Session-04/"
+IP = "192.168.1.37"
+PORT = 8081
+FOLDER = "../Session-04 folder/"
 filename = FOLDER + 'FRAT1.txt'
 
 # Create sequence

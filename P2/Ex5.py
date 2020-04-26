@@ -6,17 +6,21 @@ EXERCISE = 5
 
 print(f"-----| Practice {PRACTICE}, Exercise {EXERCISE} |------")
 
-# -- Parameters
-IP = "10.3.33.54"
-PORT = 8086
-FOLDER = "../Session-04/"
-filename = FOLDER + 'U5.txt'
-s = Seq()
-s.read_fasta(filename)
+folder = "../Session-04 folder/"
+ext = ".txt"
+gene = "U5"
+
+IP = "192.168.1.37"
+PORT = 8081
 
 # -- Create a client object
 c = Client(IP, PORT)
 
-c.debug_talk("Sending the U5 Gene to the server...", 'blue')
+# -- Print it
+print(c)
 
-c.debug_talk(s, 'blue')
+
+file = Seq().read_fasta(folder + gene + ext)
+
+c.debug_talk(f"Sending {gene} Gene to the server...")
+c.debug_talk(str(file))
