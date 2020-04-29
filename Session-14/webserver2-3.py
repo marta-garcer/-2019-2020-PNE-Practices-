@@ -25,7 +25,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         # It is a happy server: It always returns a message saying
         # that everything is ok
 
-        # Message to send back to the client
+        # Message to send back to the clinet
         contents = "I am the happy server! :-)"
 
         # Generating the response message
@@ -59,8 +59,7 @@ with socketserver.TCPServer(("", PORT), Handler) as httpd:
     # -- clint, the handler is called
     try:
         httpd.serve_forever()
-
     except KeyboardInterrupt:
         print("")
-        print("Stopped by the user")
+        print("Stoped by the user")
         httpd.server_close()
