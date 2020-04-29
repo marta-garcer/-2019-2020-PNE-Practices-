@@ -1,10 +1,10 @@
-mport socket
+import socket
 import termcolor
 from pathlib import Path
 
 
 # -- Server network parameters
-IP = "192.168.1.138"
+IP = "192.168.1.37"
 PORT = 8080
 
 

@@ -3,7 +3,7 @@ import termcolor
 
 
 # -- Server network parameters
-IP = "192.168.1.138"
+IP = "127.0.0.1"
 PORT = 8080
 
 
