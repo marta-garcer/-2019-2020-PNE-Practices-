@@ -1,7 +1,7 @@
 import http.client
 import json
 import termcolor
-import Seq
+from Seq1 import Seq
 
 GENES = {
     'FRAT1': 'ENSG00000165879',
