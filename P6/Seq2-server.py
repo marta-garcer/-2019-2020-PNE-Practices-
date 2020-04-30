@@ -7,12 +7,12 @@ from Seq1 import Seq
 import socketserver
 
 # Server´s port
-PORT = 8080
+PORT = 8084
 
 # -- This is for preventing the error: "Port already in use"
 socketserver.TCPServer.allow_reuse_address = True
 
-FOLDER = "../Session-04/"
+FOLDER = "../Session-04 folder/"
 EXT = ".txt"
 
 SEQ_GET = [

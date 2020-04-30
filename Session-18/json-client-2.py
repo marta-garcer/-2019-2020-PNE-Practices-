@@ -2,7 +2,7 @@ import http.client
 import json
 import termcolor
 
-PORT = 8080
+PORT = 8086
 SERVER = 'localhost'
 
 print(f"\nConnecting to server: {SERVER}:{PORT}\n")
