@@ -6,9 +6,8 @@ import json
 from pathlib import Path
 from Seq1 import Seq
 
-
 # Server´s port
-PORT = 8080
+PORT = 8089
 HOSTNAME = "rest.ensembl.org"
 PARAMETERS = '?content-type=application/json'
 conn = http.client.HTTPConnection(HOSTNAME)
@@ -28,23 +27,20 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         # Print the request line
         termcolor.cprint(self.requestline, 'green')
 
-        #User line
+        # User line
         user_line = self.requestline.split(" ")
 
-        #Take the symbol / out of the path
+        # Take the symbol / out of the path
         path = user_line[1]
 
-        #Read the text
+        # Read the text
         u_text = path.split('?')
 
-        #Read the first thing of the text
+        # Read the first thing of the text
         header = u_text[0]
 
         # Open the form1.html file
         # Read the index from the file
-
-
-
 
         if header == "/":
             # Read the index from the file open
@@ -52,7 +48,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             error_code = 200
 
 
-        elif header =="/listSpecies":
+        elif header == "/listSpecies":
             contents = """
             <!DOCTYPE html>
             <html lang = "en">
@@ -61,7 +57,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 <title> List Species </title >
             </head >
             <body>
-            
+
             <p> The limit you have selected is </p>
             <a href="/">Main page</a>
             </body>
@@ -105,12 +101,14 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         </head >
                         <body>
                         <h2> The chromosome of the species {specie}</h2>
-                        <p> {info} </p>
+                       
                         <a href="/">Main page</a>
                         </body>
                         </html>
                         """
-                error_code = 200
+                for chrom in info:
+                    contents += f"<p> {chrom} </p>"
+                    error_code = 200
             except KeyError:
                 contents = Path('Error.html').read_text()
                 error_code = 404
@@ -122,10 +120,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         self.send_header('Content-Type', 'text/html')
         self.send_header('Content-Length', len(str.encode(contents)))
 
-            # The header is finished
+        # The header is finished
         self.end_headers()
 
-            # Send the response message
+        # Send the response message
         self.wfile.write(str.encode(contents))
 
         return
