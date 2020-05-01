@@ -4,7 +4,7 @@ import socket
 # Write here the correct parameter for connecting to the
 # Teacher's server
 PORT = 8080
-IP = "192.168.124.179"
+IP = "192.168.1.37"
 
 
 # First, create the socket

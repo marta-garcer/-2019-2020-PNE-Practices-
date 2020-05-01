@@ -5,7 +5,7 @@ from pathlib import Path
 
 # -- Server network parameters
 IP = "192.168.1.37"
-PORT = 8080
+PORT = 8081
 
 
 def process_client(s):
