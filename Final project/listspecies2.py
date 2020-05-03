@@ -109,17 +109,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         names = info[counter]["common_name"]
                         contents += f"<i><li>{names}</li>"
 
-                error_code = 200
-            except ValueError:
-                contents = Path('limit_error.html').read_text()
-                code = 404
-
-            except IndexError:
-                contents = Path('limit_error.html').read_text()
-                code = 404
-
-
-
         elif header == "/karyotype":
             try:
                 ENDPOINT = "/info/assembly/"
@@ -153,10 +142,9 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         <meta charset = "utf-8" >
                           <title> Karyotype </title >
                         </head >
-                        <body style="background-color:lavender ;">
-                        <font face="calibri" size="5" color="black">The names of the chromosomes are:
-                        </font>
-                        
+                        <body>
+                        <h2> The chromosome of the species {specie}</h2>
+
                         <a href="/">Main page</a>
                         </body>
                         </html>
