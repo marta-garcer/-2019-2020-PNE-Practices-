@@ -47,18 +47,26 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             contents = Path('Index.html').read_text()
             error_code = 200
 
-        elif header == "/listSpecies":
+        elif header == "/chromosomeLength":
             try:
-                ENDPOINT = "/info/species/"
-                counter = 0
-                pairs = self.path.find("=")
-                limit = self.path[pairs + 1:]  # --> Conseguir el limite
+                ENDPOINT = '/info/assembly/'
+                separate = self.path.split('&')  # Separate the specie from the chromosome
+                pairs = separate[0].find('=')
+                specie = separate[0][pairs + 1:]  # Take just the name of the specie
+                if '+' in specie:
+                    specie = specie.replace("+", "_")
+                pairs2 = separate[1].find('=')
+                chromosome = separate[1][pairs2 + 1:]  # Take just the name of chromosome
+
+                NEW_PARAMETERS = specie + '/' + chromosome + PARAMETERS
+                URL = HOSTNAME + ENDPOINT + NEW_PARAMETERS
+                print(f"URL: {URL}")
 
                 try:
-                    conn.request("GET",ENDPOINT + PARAMETERS)
+                    conn.request("GET", ENDPOINT + NEW_PARAMETERS)
 
                 except ConnectionRefusedError:
-                    print ("ERROR! Cannot connect to the Server")
+                    print("ERROR! Cannot connect to the Server")
                     exit()
 
                 # -- Read the response message from the server
@@ -71,62 +79,20 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 data1 = r1.read().decode()
 
                 # -- Create a variable with the species data from the JSON received
-                info = json.loads(data1)["species"]
-                count = 0
-                for i in info:
-                    name = i["common_name"]
-                    count +=1
+                info = json.loads(data1)
 
-
-
-
-
-                contents = f"""
-                        <!DOCTYPE html>
-                        <html lang = "en">
-                        <head>
-                        <meta charset = "utf-8" >
-                          <title> List of Species </title >
-                        </head >
-                        <body style="background-color: PALEVIOLETRED;">
-                        <font face="calibri" size="5" color="black">The total length is: {count}
-                         <br>
-                         The limit you have selected is : {limit} 
-                         <br>
-                         The names of the species are: </font>
-                        <font size="4" 
-                        
-                        </body>
-                        </html>
-                        """
-
-                if limit =="":
-                    for i in info:
-                        name = i["common_name"]
-                        contents += f"<i><li>{name}</li></i>"
-
-
+                if 'json=1' in self.path:
+                    d_json = {'Specie': specie, 'Chromosome': chromosome, 'Length': info['length']}
+                    contents = json.dumps(d_json)
                 else:
-                    while counter < int(limit):
-                        counter +=1
-                        names = info[counter]["common_name"]
-                        contents += f"<i><li>{names}</li>"
+                    html = f"<p> The length of the chromosome {chromosome}" \
+                           f" of the {specie} specie is: {info['length']}</p>"
+                    contents = html_response("LENGTH OF CHROMOSOME", html, 'lightblue')
+                code = 200
 
-
-
-
-
-                error_code = 200
-
-
-            except ValueError:
-                contents = Path('limit_error.html').read_text()
+            except KeyError:
+                contents = Path("inputs_error.html").read_text()
                 code = 404
-
-            except IndexError:
-                contents = Path('limit_error.html').read_text()
-                code = 404
-
                # Generating the response message
         self.send_response(error_code)  # -- Status line: OK!
 

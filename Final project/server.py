@@ -92,33 +92,38 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                              <br>
                              The names of the species are: </font>
                             <font size="4" 
-
+                             
                             </body>
                             </html>
                             """
+
 
                 if limit == "":
                     for i in info:
                         name = i["common_name"]
                         contents += f"<i><li>{name}</li></i>"
-
+                    contents += f"""<br><br><br><a href="/">Main page</a>"""
 
                 else:
                     while counter < int(limit):
                         counter += 1
                         names = info[counter]["common_name"]
                         contents += f"<i><li>{names}</li>"
+                    contents += f"""<br><br><br><a href="/">Main page</a>"""
+
 
                 error_code = 200
             except ValueError:
-                contents = Path('limit_error.html').read_text()
-                code = 404
+                contents = Path('Error.html').read_text()
+                error_code = 404
 
             except IndexError:
-                contents = Path('limit_error.html').read_text()
-                code = 404
+                contents = Path('Error.html').read_text()
+                error_code = 404
 
-
+            except KeyError:
+                contents = Path("Error.html").read_text()
+                error_code = 404
 
         elif header == "/karyotype":
             try:
@@ -157,16 +162,87 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         <font face="calibri" size="5" color="black">The names of the chromosomes are:
                         </font>
                         
-                        <a href="/">Main page</a>
+                        
                         </body>
                         </html>
                         """
                 for chrom in info:
                     contents += f"<p> {chrom} </p>"
+                contents += f"""<br><br><br><a href="/">Main page</a>"""
                 error_code = 200
             except KeyError:
                 contents = Path('Error.html').read_text()
                 error_code = 404
+
+        elif header == "/chromosomeLength":
+            try:
+                ENDPOINT = '/info/assembly/'
+                separate = self.path.split('&')  # Separate the specie from the chromosome
+                pairs = separate[0].find('=')
+                pairs2 = separate[1].find('=')
+                specie = separate[0][pairs+1:]
+                chromo = separate[1][pairs2+1:]
+                PARAMETERS2 = specie + "/" + chromo + PARAMETERS
+
+
+
+                try:
+                    conn.request("GET", ENDPOINT + PARAMETERS2)
+
+                except ConnectionRefusedError:
+                    print("ERROR! Cannot connect to the Server")
+                    exit()
+
+                # -- Read the response message from the server
+                r1 = conn.getresponse()
+
+                # -- Print the status line
+                print(f"Response received!: {r1.status} {r1.reason}\n")
+
+                # -- Read the response's body
+                data1 = r1.read().decode()
+
+                # -- Create a variable with the data,
+                # -- form the JSON received
+                info = json.loads(data1)
+
+
+
+                # Html code
+                contents = f"""
+                            <!DOCTYPE html>
+                            <html lang = "en">
+                            <head>
+                            <meta charset = "utf-8" >
+                              <title> Chromosome Length </title >
+                            </head >
+                            <body style="background-color:lavender ;">
+                            <font face="calibri" size="5" color="black">
+                            </font>
+                            <font face = "calibri" size="5">
+
+                            
+                            </body>
+                            </html>
+                            """
+                for k,v in info.items():
+                    if k=="length":
+                        length =str(v)
+                        contents +=  f"""<i> The length of the chromosome is: {length} </i> <br><br><br><a href="/">Main page</a>"""
+
+                error_code = 200
+            except KeyError:
+                contents = Path('Error.html').read_text()
+                error_code = 404
+
+            except ValueError:
+                contents = Path("Error.html").read_text()
+                error_code= 404
+
+            except IndexError:
+                contents = Path("Error.html").read_text()
+                error_code = 404
+
 
                 # Generating the response message
         self.send_response(error_code)  # -- Status line: OK!
