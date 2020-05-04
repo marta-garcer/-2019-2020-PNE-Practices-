@@ -1,7 +1,7 @@
 import socket
 
 # Configure the Server's IP and PORT
-PORT = 8080
+PORT = 8088
 IP = "192.168.1.37"
 MAX_OPEN_REQUESTS = 5
 

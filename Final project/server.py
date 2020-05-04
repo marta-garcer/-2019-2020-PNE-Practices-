@@ -7,7 +7,7 @@ from pathlib import Path
 from Seq1 import Seq
 
 # Server´s port
-PORT = 8089
+PORT = 8080
 HOSTNAME = "rest.ensembl.org"
 PARAMETERS = '?content-type=application/json'
 conn = http.client.HTTPConnection(HOSTNAME)
@@ -230,18 +230,19 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         length =str(v)
                         contents +=  f"""<i> The length of the chromosome is: {length} </i> <br><br><br><a href="/">Main page</a>"""
 
+                    elif f"{r1.status} {r1.reason}" == "400 Bad Request":
+                        contents = Path("Error.html").read_text()
+
+                    elif f"{r1.status} {r1.reason}" == "404 Not Found":
+                        contents = Path('Error.html').read_text()
                 error_code = 200
-            except KeyError:
-                contents = Path('Error.html').read_text()
-                error_code = 404
 
             except ValueError:
                 contents = Path("Error.html").read_text()
-                error_code= 404
-
-            except IndexError:
-                contents = Path("Error.html").read_text()
                 error_code = 404
+
+
+
 
 
                 # Generating the response message
