@@ -75,7 +75,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 info = json.loads(data1)["species"]
                 count = 0
                 for i in info:
-                    name = i["common_name"]
+                    name = i["display_name"]
                     count += 1
 
                 contents = f"""
@@ -98,16 +98,16 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                             """
 
 
-                if limit == "":
+                if limit == "" or "limit=" not in self.path:
                     for i in info:
-                        name = i["common_name"]
+                        name = i["display_name"]
                         contents += f"<i><li>{name}</li></i>"
                     contents += f"""<br><br><br><a href="/">Main page</a>"""
 
                 else:
                     while counter < int(limit):
                         counter += 1
-                        names = info[counter]["common_name"]
+                        names = info[counter]["display_name"]
                         contents += f"<i><li>{names}</li>"
                     contents += f"""<br><br><br><a href="/">Main page</a>"""
 
@@ -130,6 +130,9 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 ENDPOINT = "/info/assembly/"
                 pair = self.path.find("=")
                 specie = self.path[pair + 1:]
+                for a in specie:
+                    if a == "+":
+                        specie = specie.replace("+", "_")
                 PARAMS = specie + PARAMETERS
                 try:
                     conn.request("GET", ENDPOINT + PARAMS)
