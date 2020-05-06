@@ -367,16 +367,22 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         elif header == "/geneInfo":
             try:
-                ENDPOINT = "/lookup/id"
-                pairs = self.path.find("=")
-                gene = self.path[pairs+1:]
+                ENDPOINT = '/lookup/id/'
+                pairs = self.path.find('=')
+                genes = self.path[pairs + 1:]
 
+                if '&' in genes:  # (When json=1 appears)
+                    argument = genes.split('&')
+                    gene = argument[0]  # Take just the name of the gene
 
+                else:
+                    gene = genes
                 gene1 = gene_seq(gene)
                 sequence = get_seq(gene1)
-                PARAMETERS1 = gene1 + PARAMETERS
+                PARAMETERS2 = gene1 + PARAMETERS
+
                 try:
-                    conn.request("GET", ENDPOINT + PARAMETERS1)
+                    conn.request("GET", ENDPOINT + PARAMETERS2)
 
                 except ConnectionRefusedError:
                     print("ERROR! Cannot connect to the Server")
@@ -388,43 +394,41 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 # -- Print the status line
                 print(f"Response received!: {r1.status} {r1.reason}\n")
 
-                 # -- Read the response's body
+                # -- Read the response's body
                 data1 = r1.read().decode()
 
-                #-- Create a variable with the species data from the JSON received
+                # -- Create a variable with the species data from the JSON received
                 info = json.loads(data1)
                 seq = Seq(sequence)
-
-                # Html code
                 contents = f"""
-                                            <!DOCTYPE html>
-                                            <html lang = "en">
-                                            <head>
-                                            <meta charset = "utf-8" >
-                                              <title> Gene info </title >
-                                            </head >
-                                            <body style="background-color:palegreen ;">
-                                            <font face="calibri" size="7">INFORMATION ABOUT A HUMAN GENE
-                                            </font>
-                                            
-                                            <font face = "calibri" size="5">
+                            <!DOCTYPE html>
+                            <html lang = "en">
+                            <head>
+                            <meta charset = "utf-8" >
+                              <title> Gene sequence </title >
+                            </head >
+                            <body style="background-color:PALEGREEN;">
+                            <font face="calibri" size="5" color="black">
+                            </font>
+                            <font face = "calibri" size="5">
 
 
-                                            </body>
-                                            </html>
-                                             """
+                            </body>
+                            </html>
+                             """
+
+
+                if f"{r1.status} {r1.reason}" == "200 OK":
+                    contents += f"""<h3>Information about the {gene} gene:</h3>
+                                 <p>Starting point: {info['start']}</p>
+                                 <p>Ending point: {info['end']}</p>
+                                <p>The length of the gene's sequence is: {seq.len()}</p>
+                                <p>The ID of the gene is: {info['id']}</p>
+                                <p>This gene is located in the chromosome: {info['seq_region_name']}</p>
+                                <br><br><br><a href="/">Main page</a>
+                                """
+
                 error_code = 200
-
-
-                contents += f"""<p>Information about the {gene} gene: </p>
-                <br> <p>Starting point:{info["start"]}</p>
-                <br> <p>Ending point: {info["end"]}</p>
-                <br> <p>Length of the sequence: {seq.len()}</p>
-                <br> <p>ID of the gene: {info["id"]}</p>
-                <br> <p>Chromosome where the gene is located: {info["seq_region_name"]}</p>
-                 """
-
-                contents+= f"""<a href="/">Main page</a>"""
 
 
             except IndexError:
