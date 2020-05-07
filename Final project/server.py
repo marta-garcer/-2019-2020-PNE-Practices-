@@ -444,6 +444,142 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 error_code = 404
 
 
+        elif header == "/geneCalc":
+            try:
+                pairs = self.path.find('=')
+                genes = self.path[pairs + 1:]
+
+                if '&' in genes:  # (When json=1 appears)
+                    argument = genes.split('&')
+                    gene = argument[0]  # Take just the name of the gene
+
+                else:
+                    gene = genes
+                gene1 = gene_seq(gene)
+                sequence = get_seq(gene1)
+                seq = Seq(sequence)
+                PARAMETERS2 = gene1 + PARAMETERS
+                bases = ['A', 'C', 'T', 'G']
+
+
+                contents = f"""
+                         <!DOCTYPE html>
+                         <html lang = "en">
+                         <head>
+                         <meta charset = "utf-8" >
+                         <title> Gene calculations </title >
+                         </head >
+                         <body style="background-color:ROSYBROWN;">
+                         
+                         <font face = "calibri" size="5">
+                         <h3>Calculations on human gene</h3>
+                         <p>The length of the {gene} gene is: {seq.len()}</p>
+
+                          </body>
+                          </html>
+                           """
+                error_code = 200
+
+                for base in bases:
+                    perc_base = round(seq.count_base(base) * 100/seq.len(),2)
+                    contents += f"""<p>{base}: {seq.count_base(base)} ({perc_base}%) </p>"""
+                contents += f"""<br><br><br><a href="/">Main page</a></body></html>"""
+
+            except IndexError:
+                contents = Path("Error.html").read_text()
+                error_code = 404
+            except KeyError:
+                contents = Path("Error.html").read_text()
+                error_code = 404
+
+            except ValueError:
+                contents = Path("Error.html").read_text()
+                error_code = 404
+
+
+        elif header == "/geneList":
+            try:
+                ENDPOINT = "overlap/region/human/"
+                pairs = self.path.split("&")   #Separate chromosome from the rest
+                arg = pairs[0].find("=")
+                chromo = pairs[0][arg + 1:]   #Name of the chromosome
+                arg2 = pairs[1].find("=")
+                start = pairs[1][arg2 +1:]    #Starting point
+                arg3 = pairs[2].find("=")
+                end = pairs[2][arg3+ 1:]      #Ending point
+                PARAMETERS1 = "?feature=gene;content-type=application/json"
+                PARAMETERS2 = ENDPOINT + chromo + ":" + start + "-" + end + PARAMETERS1
+
+                try:
+                    conn.request("GET", PARAMETERS2)
+
+                except ConnectionRefusedError:
+                    print("ERROR! Cannot connect to the Server")
+                    exit()
+
+                # -- Read the response message from the server
+                r1 = conn.getresponse()
+
+                # -- Print the status line
+                print(f"Response received!: {r1.status} {r1.reason}\n")
+
+                # -- Read the response's body
+                data1 = r1.read().decode()
+
+                # -- Create a variable with the species data from the JSON received
+                info = json.loads(data1)
+
+                contents = f"""
+                         <!DOCTYPE html>
+                         <html lang = "en">
+                         <head>
+                         <meta charset = "utf-8" >
+                         <title> Gene List</title >
+                         </head >
+                        <body style="background-color:HONEYDEW;">
+
+                         <font face = "calibri" size="5">
+                         <h3>Genes located in the {chromo} chromosome</h3>
+                         <h4>From {start} to {end}</h4>
+                     
+                         </body>
+                         </html>
+                         """
+                error_code = 200
+
+                for i in info:
+                    contents += f"""<li>{i["external_name"]}</li>"""
+                contents += f"""<br><br><br><a href="/">Main page</a></body></html>"""
+
+            except IndexError:
+                contents = Path("Error.html").read_text()
+                error_code = 404
+            except KeyError:
+                contents = Path("Error.html").read_text()
+                error_code = 404
+
+            except ValueError:
+                contents = Path("Error.html").read_text()
+                error_code = 404
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
