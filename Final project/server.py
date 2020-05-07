@@ -547,9 +547,12 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                          """
                 error_code = 200
 
-                for i in info:
-                    contents += f"""<li>{i["external_name"]}</li>"""
-                contents += f"""<br><br><br><a href="/">Main page</a></body></html>"""
+                if f"{r1.status} {r1.reason}" == "200 OK":
+                    for i in info:
+                        contents += f"""<li>{i["external_name"]}</li>"""
+                    contents += f"""<br><br><br><a href="/">Main page</a></body></html>"""
+                else:
+                    contents = Path("Error.html").read_text()
 
             except IndexError:
                 contents = Path("Error.html").read_text()
